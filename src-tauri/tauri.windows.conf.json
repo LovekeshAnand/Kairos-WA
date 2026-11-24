@@ -1,0 +1,10 @@
+{
+  "bundle": {
+    "targets": ["nsis"],
+    "resources": { "runtime.tar": "runtime.tar" },
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true },
+      "nsis": { "installMode": "currentUser", "displayLanguageSelector": false }
+    }
+  }
+}

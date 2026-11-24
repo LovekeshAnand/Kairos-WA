@@ -1,0 +1,58 @@
+# Builds Kairos for Windows and macOS when a version tag is pushed (git tag v1.1.0 && git push --tags)
+# and publishes them as a GitHub release. The app's update check and the Mac one-line installer
+# both read the latest release, so publishing here is all an update takes.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci
+      - run: npm run setup
+      - run: npm test
+      - run: npm run dist
+      - run: npm run dist:mac # platform-neutral Mac payload; the Mac job adds the app to it
+      - uses: actions/upload-artifact@v4
+        with: { name: mac-payload, path: dist/Kairos-mac.tar.gz }
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: src-tauri/target/release/bundle/nsis/*.exe
+
+  macos:
+    needs: windows
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: dtolnay/rust-toolchain@stable
+        with: { targets: 'aarch64-apple-darwin,x86_64-apple-darwin' }
+      - run: npm ci
+      - name: Build Kairos.app (universal, ad-hoc signed)
+        run: |
+          touch src-tauri/runtime.tar # Windows-only resource; keeps the shared config valid
+          npx tauri build --target universal-apple-darwin
+      - uses: actions/download-artifact@v4
+        with: { name: mac-payload }
+      - name: Add the app to the Mac package
+        run: |
+          tar -xzf Kairos-mac.tar.gz
+          cp -R src-tauri/target/universal-apple-darwin/release/bundle/macos/Kairos.app Kairos-mac/payload/
+          tar -czf Kairos-mac.tar.gz Kairos-mac
+          cp Kairos-mac/install.sh install.sh
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Kairos-mac.tar.gz
+            install.sh

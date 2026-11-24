@@ -1,0 +1,73 @@
+{
+  "name": "kairos",
+  "productName": "Kairos",
+  "version": "1.0.0",
+  "description": "Kairos — quietly turns your WhatsApp DMs into a tidy Notion workspace.",
+  "main": "app/main.js",
+  "private": true,
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "start": "tauri dev",
+    "engine": "vendor\\node\\node.exe engine/index.js",
+    "test": "node --test engine/classify.test.js engine/openwa.test.js engine/contacts.test.js engine/sync.test.js engine/config.test.js",
+    "dist": "node scripts/pack-runtime.js && tauri build",
+    "dist:mac": "node scripts/build-mac.js",
+    "start:electron": "electron .",
+    "dist:electron": "electron-builder --win"
+  },
+  "build": {
+    "appId": "app.kairos.desktop",
+    "productName": "Kairos",
+    "icon": "app/ui/assets/icon.png",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "app/**",
+      "engine/**",
+      "!engine/*.test.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/node",
+        "to": "vendor/node"
+      },
+      {
+        "from": "vendor/openwa",
+        "to": "vendor/openwa",
+        "filter": [
+          "dist/**",
+          "node_modules/**",
+          "package.json"
+        ]
+      },
+      {
+        "from": "vendor/puppeteer/chrome",
+        "to": "vendor/puppeteer/chrome"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "shortcutName": "Kairos"
+    },
+    "afterPack": "scripts/after-pack.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^5.27.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.9.4",
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3"
+  },
+  "kairos": {
+    "releases": ""
+  }
+}

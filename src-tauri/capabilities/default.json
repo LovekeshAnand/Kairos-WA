@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "The boot page needs no IPC; the Kairos page is served by the local engine and talks only to it.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

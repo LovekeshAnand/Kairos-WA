@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'" />
+  <title>Kairos</title>
+  <link rel="icon" href="assets/icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="titlebar"><span class="tb-title">Kairos</span></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="assets/logo.png" alt="" class="brand-mark" />
+        <span class="brand-word">kairos</span>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-foot" id="sideFoot"></div>
+    </aside>
+    <main class="main" id="view"></main>
+  </div>
+  <div class="modal-root" id="modal"></div>
+  <div class="toast-root" id="toasts"></div>
+  <script src="app.js"></script>
+</body>
+</html>
